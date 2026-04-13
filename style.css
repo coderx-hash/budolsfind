@@ -219,45 +219,6 @@ header p {
     line-height: 1.2;
 }
 
-.quick-links-wrap {
-    background: #fff;
-    border: 1px solid #f1e0d8;
-    box-shadow: var(--card-shadow);
-    border-radius: 14px;
-    padding: 12px;
-}
-
-.quick-links-wrap h3 {
-    font-size: 0.92rem;
-    color: #313848;
-    margin-bottom: 10px;
-}
-
-.quick-links {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
-    gap: 8px;
-}
-
-.quick-link {
-    display: block;
-    text-decoration: none;
-    color: #2f3545;
-    background: #fff5f0;
-    border: 1px solid #ffd7c5;
-    border-radius: 10px;
-    padding: 8px 10px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    transition: transform 0.18s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.quick-link:hover {
-    transform: translateY(-2px);
-    border-color: #ffb191;
-    background: #fff1ea;
-}
-
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -423,6 +384,36 @@ header p {
     font-weight: 700;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0 0;
+}
+
+.pagination button {
+    border: 1px solid #ffd0bc;
+    background: #fff;
+    color: #2f3748;
+    font-weight: 800;
+    font-size: 0.82rem;
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+#pageInfo {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #5f697b;
+}
+
 .modal {
     position: fixed;
     inset: 0;
@@ -502,6 +493,10 @@ header p {
         white-space: nowrap;
     }
 
+    .content-area {
+        gap: 12px;
+    }
+
     .hero-banners {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
@@ -510,10 +505,6 @@ header p {
 
     .hero-main {
         grid-row: auto;
-    }
-
-    .quick-links {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .grid {
@@ -531,6 +522,19 @@ header p {
 
     .btn-shopee {
         padding: 8px;
+    }
+
+    .pagination {
+        gap: 6px;
+    }
+
+    .pagination button {
+        padding: 7px 11px;
+        font-size: 0.76rem;
+    }
+
+    #pageInfo {
+        font-size: 0.74rem;
     }
 }
 

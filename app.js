@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -14,11 +13,18 @@ const firebaseConfig = {
 const productGrid = document.getElementById('productGrid');
 const searchInput = document.getElementById('searchInput');
 const categoryButtons = document.querySelectorAll('.category-btn');
+const prevPageBtn = document.getElementById('prevPageBtn');
+const nextPageBtn = document.getElementById('nextPageBtn');
+const pageInfo = document.getElementById('pageInfo');
+const paginationControls = document.getElementById('paginationControls');
 
 const state = {
     searchTerm: '',
     category: 'all',
-    products: []
+    products: [],
+    filteredProducts: [],
+    currentPage: 1,
+    pageSize: 10
 };
 
 let csvProductsCache = [];
@@ -62,9 +68,9 @@ const demoProducts = demoSeedProducts.map((item, index) => ({
 
 const categoryRules = [
     { category: 'tech', regex: /(charger|keyboard|phone|laptop|gadget|printer|usb|bluetooth|speaker)/i },
-    { category: 'fashion', regex: /(shirt|hoodie|pants|wallet|dress|bag|sando|panty|briefs|underwear|jacket)/i },
+    { category: 'fashion', regex: /(shirt|hoodie|pants|wallet|dress|bag|sando|panty|briefs|underwear|jacket|swim|hat|belt|scarf|shoes)/i },
     { category: 'accessories', regex: /(bracelet|necklace|earring|ring|jewelry|charms|watch|chain|clip|buckle)/i },
-    { category: 'lifestyle', regex: /(food|mango|salt|toy|blender|seasoning|home|kitchen|pet|garbage)/i }
+    { category: 'lifestyle', regex: /(food|mango|salt|toy|blender|seasoning|home|kitchen|pet|garbage|mirror|aquarium|camp|table|fan)/i }
 ];
 
 function isFirebaseConfigured() {
@@ -94,6 +100,11 @@ function asHttpUrl(value) {
     if (!value) return '';
     const text = String(value).trim();
     return /^https?:\/\//i.test(text) ? text : '';
+}
+
+function createGuaranteedImageUrl(title, category, index) {
+    const seed = encodeURIComponent(`${category}-${title}-${index}`);
+    return `https://picsum.photos/seed/${seed}/420/420`;
 }
 
 function createPlaceholderImage(title, category) {
@@ -130,6 +141,7 @@ function normalizeProduct(item, index) {
 
     const category = item.category || inferCategory({ title, merchant });
     const remoteImage = asHttpUrl(item.image || item.imageUrl || item.thumbnail || item['Image URL'] || item['Image']);
+    const fallbackImage = createPlaceholderImage(title, category);
 
     return {
         title,
@@ -140,8 +152,9 @@ function normalizeProduct(item, index) {
         discount: item.discount || item.commissionRate || item['Commission Rate'] || 'HOT DEAL',
         sold: item.sold || item.sales || item['Sales'] || '1k sold',
         rating: item.rating || '4.8',
-        image: remoteImage || createPlaceholderImage(title, category),
-        fallbackImage: createPlaceholderImage(title, category),
+        image: remoteImage || createGuaranteedImageUrl(title, category, index),
+        hasRealImage: Boolean(remoteImage),
+        fallbackImage,
         shopeeLink: primaryLink,
         videoUrl: asHttpUrl(item.videoUrl || item.video || '')
     };
@@ -199,29 +212,40 @@ function parseCsv(text) {
 }
 
 async function loadCsvProducts() {
-    try {
-        const response = await fetch('./data/products.csv', { cache: 'no-cache' });
-        if (!response.ok) return [];
+    const csvPaths = [
+        './data/products.csv',
+        './data/products-2.csv',
+        './data/products-3.csv',
+        './data/products-4.csv'
+    ];
 
-        const csvText = await response.text();
-        const parsed = parseCsv(csvText);
-        if (parsed.length < 2) return [];
+    const all = await Promise.all(csvPaths.map(async (path) => {
+        try {
+            const response = await fetch(path, { cache: 'no-cache' });
+            if (!response.ok) return [];
 
-        const headers = parsed[0];
-        const body = parsed.slice(1);
+            const csvText = await response.text();
+            const parsed = parseCsv(csvText);
+            if (parsed.length < 2) return [];
 
-        return body
-            .filter((line) => line.some((value) => value !== ''))
-            .map((line) => {
-                const item = {};
-                headers.forEach((header, index) => {
-                    item[header] = line[index] || '';
+            const headers = parsed[0];
+            const body = parsed.slice(1);
+
+            return body
+                .filter((line) => line.some((value) => value !== ''))
+                .map((line) => {
+                    const item = {};
+                    headers.forEach((header, index) => {
+                        item[header] = line[index] || '';
+                    });
+                    return item;
                 });
-                return item;
-            });
-    } catch {
-        return [];
-    }
+        } catch {
+            return [];
+        }
+    }));
+
+    return all.flat();
 }
 
 function applyFilters() {
@@ -232,13 +256,38 @@ function applyFilters() {
         return categoryMatch && titleMatch;
     });
 
+    filtered.sort((a, b) => Number(b.hasRealImage) - Number(a.hasRealImage));
+    state.filteredProducts = filtered;
+    state.currentPage = 1;
+
     renderProducts(filtered);
+}
+
+function updatePagination(totalItems) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / state.pageSize));
+    state.currentPage = Math.max(1, Math.min(state.currentPage, totalPages));
+
+    if (prevPageBtn) prevPageBtn.disabled = state.currentPage <= 1;
+    if (nextPageBtn) nextPageBtn.disabled = state.currentPage >= totalPages;
+    if (pageInfo) pageInfo.textContent = `Page ${state.currentPage} of ${totalPages}`;
+    if (paginationControls) paginationControls.style.display = totalItems ? 'flex' : 'none';
+}
+
+function getCurrentPageItems(items) {
+    const start = (state.currentPage - 1) * state.pageSize;
+    return items.slice(start, start + state.pageSize);
+}
+
+function gotoPage(page) {
+    state.currentPage = page;
+    renderProducts(state.filteredProducts);
 }
 
 function renderProducts(items) {
     productGrid.innerHTML = '';
 
     if (!items.length) {
+        if (paginationControls) paginationControls.style.display = 'none';
         const empty = document.createElement('p');
         empty.className = 'empty-state';
         empty.textContent = 'Walang result sa filter mo. Try ibang keyword o category.';
@@ -246,8 +295,11 @@ function renderProducts(items) {
         return;
     }
 
+    updatePagination(items.length);
+    const pageItems = getCurrentPageItems(items);
+
     const fragment = document.createDocumentFragment();
-    items.forEach((item) => fragment.appendChild(createCard(item)));
+    pageItems.forEach((item) => fragment.appendChild(createCard(item)));
     productGrid.appendChild(fragment);
 }
 
@@ -315,24 +367,23 @@ function setupFilters() {
     });
 }
 
-function renderQuickLinks() {
-    const quickLinks = document.getElementById('quickLinks');
-    if (!quickLinks) return;
+function setupPagination() {
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (state.currentPage > 1) {
+                gotoPage(state.currentPage - 1);
+            }
+        });
+    }
 
-    quickLinks.innerHTML = '';
-    const fragment = document.createDocumentFragment();
-
-    quickShopeeLinks.forEach((url, index) => {
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.className = 'quick-link';
-        link.textContent = `Shopee Link ${index + 1}`;
-        fragment.appendChild(link);
-    });
-
-    quickLinks.appendChild(fragment);
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(state.filteredProducts.length / state.pageSize));
+            if (state.currentPage < totalPages) {
+                gotoPage(state.currentPage + 1);
+            }
+        });
+    }
 }
 
 const modal = document.getElementById('videoModal');
@@ -398,5 +449,5 @@ async function bootstrapData() {
 }
 
 setupFilters();
-renderQuickLinks();
+setupPagination();
 bootstrapData();
