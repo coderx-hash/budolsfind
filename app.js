@@ -96,21 +96,52 @@ function asHttpUrl(value) {
     return /^https?:\/\//i.test(text) ? text : '';
 }
 
+function createPlaceholderImage(title, category) {
+    const safeTitle = String(title || 'Budolsfind').slice(0, 28);
+    const paletteByCategory = {
+        tech: ['#1f3a8a', '#2563eb'],
+        fashion: ['#9a3412', '#ea580c'],
+        accessories: ['#7c2d12', '#f59e0b'],
+        lifestyle: ['#14532d', '#22c55e']
+    };
+
+    const [start, end] = paletteByCategory[category] || ['#374151', '#9ca3af'];
+    const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420">
+            <defs>
+                <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="${start}" />
+                    <stop offset="100%" stop-color="${end}" />
+                </linearGradient>
+            </defs>
+            <rect width="420" height="420" fill="url(#bg)" />
+            <text x="24" y="210" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">${safeTitle}</text>
+            <text x="24" y="244" fill="#ffffff" font-family="Segoe UI, Arial, sans-serif" font-size="16" opacity="0.9">Budolsfind</text>
+        </svg>
+    `;
+
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
 function normalizeProduct(item, index) {
     const title = item.title || item.name || item.itemName || item['Item Name'] || `Shopee Item #${index + 1}`;
     const merchant = item.merchant || item.shopName || item.storeName || item['Shop Name'] || item.offerName || item['Offer Name'] || 'Top Seller';
     const primaryLink = asHttpUrl(item.shopeeLink || item.link || item.offerLink || item.productLink || item['Trackable Link_short'] || item['Product Link'] || item['Offer Link']) || quickShopeeLinks[index % quickShopeeLinks.length] || 'https://shopee.ph';
 
+    const category = item.category || inferCategory({ title, merchant });
+    const remoteImage = asHttpUrl(item.image || item.imageUrl || item.thumbnail || item['Image URL'] || item['Image']);
+
     return {
         title,
         merchant,
-        category: item.category || inferCategory({ title, merchant }),
+        category,
         price: toPeso(item.price || item.Price),
         originalPrice: item.originalPrice || item.priceBefore || '',
         discount: item.discount || item.commissionRate || item['Commission Rate'] || 'HOT DEAL',
         sold: item.sold || item.sales || item['Sales'] || '1k sold',
         rating: item.rating || '4.8',
-        image: asHttpUrl(item.image || item.imageUrl || item.thumbnail) || 'https://via.placeholder.com/420x420?text=Budolsfind',
+        image: remoteImage || createPlaceholderImage(title, category),
+        fallbackImage: createPlaceholderImage(title, category),
         shopeeLink: primaryLink,
         videoUrl: asHttpUrl(item.videoUrl || item.video || '')
     };
@@ -225,6 +256,7 @@ function createCard(item) {
     card.className = 'card item-card';
 
     const discountText = item.discount || 'HOT DEAL';
+    const hasVideo = Boolean(item.videoUrl);
 
     card.innerHTML = `
         <div class="badges">
@@ -232,10 +264,10 @@ function createCard(item) {
             <span class="badge badge-shipping">FREE SHIPPING</span>
         </div>
         <div class="image-container">
-            <img src="${item.image || 'https://via.placeholder.com/420x420?text=Budolsfind'}" alt="${item.title || 'Product'}">
-            <button type="button" class="play-overlay">
+            <img src="${item.image}" alt="${item.title || 'Product'}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            ${hasVideo ? `<button type="button" class="play-overlay">
                 <span class="play-icon">▶</span>
-            </button>
+            </button>` : ''}
         </div>
         <div class="card-content">
             <p class="merchant">${item.merchant || 'Top Seller'}</p>
@@ -252,8 +284,15 @@ function createCard(item) {
         </div>
     `;
 
+    const image = card.querySelector('img');
+    image.addEventListener('error', () => {
+        image.src = item.fallbackImage || createPlaceholderImage(item.title, item.category);
+    }, { once: true });
+
     const previewButton = card.querySelector('.play-overlay');
-    previewButton.addEventListener('click', () => openVideo(item.videoUrl || ''));
+    if (previewButton) {
+        previewButton.addEventListener('click', () => openVideo(item.videoUrl || ''));
+    }
 
     return card;
 }
@@ -312,10 +351,7 @@ function normalizeVideoUrl(url) {
 
 function openVideo(url) {
     const normalized = normalizeVideoUrl(url);
-    if (!normalized) {
-        alert('No preview video available for this item.');
-        return;
-    }
+    if (!normalized) return;
 
     modal.style.display = 'flex';
     iframe.src = normalized;
