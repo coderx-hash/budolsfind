@@ -38,7 +38,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 40;
-    padding: 16px;
+    padding: 14px 16px 12px;
     background: linear-gradient(180deg, #fff, #fff4ed);
     border-bottom: 1px solid #ffd8c8;
     box-shadow: 0 8px 20px rgba(238, 77, 45, 0.09);
@@ -55,7 +55,7 @@ header p {
     text-align: center;
     color: var(--ink-2);
     margin-top: 6px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     font-size: 0.94rem;
 }
 
@@ -186,6 +186,47 @@ header p {
 
 .showcase-card {
     padding: 12px;
+}
+
+.top-items-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.top-item-chip {
+    display: block;
+    text-decoration: none;
+    color: #243041;
+    border: 1px solid #f1d8cc;
+    border-radius: 10px;
+    background: #fff8f3;
+    padding: 8px;
+}
+
+.top-item-chip:hover {
+    border-color: #ffbc9e;
+    background: #fff2ea;
+}
+
+.top-item-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.77rem;
+    line-height: 1.2;
+    min-height: 2.35em;
+    font-weight: 700;
+}
+
+.top-item-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    color: #6e7787;
+    font-weight: 700;
 }
 
 .section-head {
@@ -348,6 +389,7 @@ header p {
 }
 
 .card {
+    position: relative;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #f0f0f0;
@@ -552,6 +594,10 @@ header p {
     .grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    .top-items-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 640px) {
@@ -599,6 +645,10 @@ header p {
 
     .categories-showcase {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .top-items-strip {
+        grid-template-columns: 1fr;
     }
 
     .cat-tile {

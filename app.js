@@ -25,6 +25,7 @@ const flashSaleGrid = document.getElementById('flashSaleGrid');
 const topProductsGrid = document.getElementById('topProductsGrid');
 const mallGrid = document.getElementById('mallGrid');
 const flashCountdown = document.getElementById('flashCountdown');
+const topItemsStrip = document.getElementById('topItemsStrip');
 
 const state = {
     searchTerm: '',
@@ -380,8 +381,35 @@ function renderMallCards(products) {
     mallGrid.appendChild(fragment);
 }
 
+function renderTopItemsStrip(products) {
+    if (!topItemsStrip) return;
+
+    const bySales = [...products].sort((a, b) => parseCompactNumber(b.sold) - parseCompactNumber(a.sold)).slice(0, 8);
+    topItemsStrip.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    bySales.forEach((item) => {
+        const chip = document.createElement('a');
+        chip.className = 'top-item-chip';
+        chip.href = item.shopeeLink;
+        chip.target = '_blank';
+        chip.rel = 'noopener noreferrer';
+        chip.innerHTML = `
+            <span class="top-item-name">${item.title}</span>
+            <span class="top-item-meta">
+                <span>${item.price}</span>
+                <span>${item.sold || 'fast'}</span>
+            </span>
+        `;
+        fragment.appendChild(chip);
+    });
+
+    topItemsStrip.appendChild(fragment);
+}
+
 function renderHomepageSections(products) {
     renderCategoryShowcase(products);
+    renderTopItemsStrip(products);
 
     const bySales = [...products].sort((a, b) => parseCompactNumber(b.sold) - parseCompactNumber(a.sold));
     renderDealCards(flashSaleGrid, bySales.slice(0, 6));
