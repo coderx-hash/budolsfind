@@ -394,13 +394,14 @@ function renderTopItemsStrip(products) {
         chip.href = item.shopeeLink;
         chip.target = '_blank';
         chip.rel = 'noopener noreferrer';
-        chip.innerHTML = `
-            <span class="top-item-name">${item.title}</span>
-            <span class="top-item-meta">
-                <span>${item.price}</span>
-                <span>${item.sold || 'fast'}</span>
-            </span>
-        `;
+        chip.title = item.title;
+        chip.innerHTML = `<img class="top-item-image" src="${item.image}" alt="${item.title}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`;
+
+        const img = chip.querySelector('.top-item-image');
+        img.addEventListener('error', () => {
+            img.src = item.fallbackImage;
+        }, { once: true });
+
         fragment.appendChild(chip);
     });
 
