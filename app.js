@@ -17,6 +17,9 @@ const prevPageBtn = document.getElementById('prevPageBtn');
 const nextPageBtn = document.getElementById('nextPageBtn');
 const pageInfo = document.getElementById('pageInfo');
 const paginationControls = document.getElementById('paginationControls');
+const currentDateTime = document.getElementById('currentDateTime');
+const countdownTimer = document.getElementById('countdownTimer');
+const newsTicker = document.getElementById('newsTicker');
 
 const state = {
     searchTerm: '',
@@ -216,7 +219,9 @@ async function loadCsvProducts() {
         './data/products.csv',
         './data/products-2.csv',
         './data/products-3.csv',
-        './data/products-4.csv'
+        './data/products-4.csv',
+        './data/products-5.csv',
+        './data/products-6.csv'
     ];
 
     const all = await Promise.all(csvPaths.map(async (path) => {
@@ -246,6 +251,76 @@ async function loadCsvProducts() {
     }));
 
     return all.flat();
+}
+
+function getNextMegaSaleDate() {
+    const now = new Date();
+    const next = new Date(now.getFullYear(), now.getMonth(), 15, 0, 0, 0);
+    if (now > next) {
+        next.setMonth(next.getMonth() + 1);
+    }
+    return next;
+}
+
+function startDateTimeClock() {
+    const update = () => {
+        const now = new Date();
+        if (currentDateTime) {
+            currentDateTime.textContent = now.toLocaleString('en-PH', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+    };
+
+    update();
+    setInterval(update, 1000);
+}
+
+function startSaleCountdown() {
+    const update = () => {
+        const now = new Date();
+        const target = getNextMegaSaleDate();
+        const diff = Math.max(0, target.getTime() - now.getTime());
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        if (countdownTimer) {
+            countdownTimer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+    };
+
+    update();
+    setInterval(update, 1000);
+}
+
+function startNewsTicker() {
+    const newsItems = [
+        'Flash deals updated daily with fresh Shopee links.',
+        'Trending categories: Fashion, Tech, Accessories, Lifestyle.',
+        'Payday sale countdown is now live for better engagement.',
+        'New product batches added for wider product discovery.',
+        'Mobile layout optimized for no-zoom browsing experience.'
+    ];
+
+    let index = 0;
+    const update = () => {
+        if (newsTicker) {
+            newsTicker.textContent = newsItems[index % newsItems.length];
+            index += 1;
+        }
+    };
+
+    update();
+    setInterval(update, 4000);
 }
 
 function applyFilters() {
@@ -450,4 +525,7 @@ async function bootstrapData() {
 
 setupFilters();
 setupPagination();
+startDateTimeClock();
+startSaleCountdown();
+startNewsTicker();
 bootstrapData();

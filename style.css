@@ -23,6 +23,7 @@ body {
         radial-gradient(circle at 85% -8%, rgba(255, 120, 70, 0.24), transparent 35%),
         linear-gradient(180deg, #fff7f0 0%, #f5f6f7 240px, var(--bg) 100%);
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .sale-banner {
@@ -168,6 +169,64 @@ header p {
 .content-area {
     display: grid;
     gap: 16px;
+}
+
+.engagement-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.eng-card {
+    background: #fff;
+    border: 1px solid #f2d6c9;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--card-shadow);
+}
+
+.eng-label {
+    color: #7a8190;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.eng-card h3 {
+    font-size: 1.03rem;
+    color: #1f2a3d;
+}
+
+.news-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #f2d6c9;
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: var(--card-shadow);
+}
+
+.news-badge {
+    background: linear-gradient(135deg, #ef4d2f, #ff8a00);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+#newsTicker {
+    font-size: 0.84rem;
+    color: #394255;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .hero-banners {
@@ -323,6 +382,7 @@ header p {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+    word-break: break-word;
 }
 
 .price-section {
@@ -497,6 +557,28 @@ header p {
         gap: 12px;
     }
 
+    .engagement-strip {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .eng-card {
+        padding: 10px;
+    }
+
+    .eng-card h3 {
+        font-size: 0.93rem;
+    }
+
+    .news-strip {
+        padding: 9px 10px;
+        gap: 8px;
+    }
+
+    #newsTicker {
+        font-size: 0.75rem;
+    }
+
     .hero-banners {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
@@ -508,7 +590,7 @@ header p {
     }
 
     .grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 10px;
     }
 
