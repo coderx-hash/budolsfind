@@ -1,0 +1,366 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+const productGrid = document.getElementById('productGrid');
+const searchInput = document.getElementById('searchInput');
+const categoryButtons = document.querySelectorAll('.category-btn');
+
+const state = {
+    searchTerm: '',
+    category: 'all',
+    products: []
+};
+
+let csvProductsCache = [];
+
+const quickShopeeLinks = [
+    'https://s.shopee.ph/9UxUeT7jqW',
+    'https://s.shopee.ph/30k0uXgwSb',
+    'https://s.shopee.ph/4AvyIhnqqw',
+    'https://s.shopee.ph/2qQaiGOgjW',
+    'https://s.shopee.ph/1BIMjDOeEL'
+];
+
+const demoSeedProducts = [
+    { title: 'Oversized Street Tee - Minimal Black', price: 'P349', originalPrice: 'P699', discount: '-50%', sold: '3.2k sold', rating: '4.9', category: 'fashion', merchant: 'Urban Layer PH', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Korean Fit Hoodie Jacket Unisex', price: 'P420', originalPrice: 'P820', discount: '-49%', sold: '2.7k sold', rating: '4.8', category: 'fashion', merchant: 'StreetLab Official', image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Canvas Tote Bag - Personalized', price: 'P76', originalPrice: 'P149', discount: '-49%', sold: '6k sold', rating: '4.9', category: 'fashion', merchant: 'HypeTouch', image: 'https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Cotton Boxer Briefs Women Set', price: 'P150', originalPrice: 'P289', discount: '-48%', sold: '10k sold', rating: '4.8', category: 'fashion', merchant: 'All of me Store', image: 'https://images.unsplash.com/photo-1618886614638-80e3c103d31a?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'RGB Mechanical Keyboard 87 Keys', price: 'P1,249', originalPrice: 'P1,999', discount: '-37%', sold: '1.8k sold', rating: '4.8', category: 'tech', merchant: 'Keycap Republic', image: 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'GaN Fast Charger 65W USB-C', price: 'P799', originalPrice: 'P1,299', discount: '-38%', sold: '12.4k sold', rating: '4.8', category: 'tech', merchant: 'ChargePro Hub', image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Wireless Tattoo Stencil Printer', price: 'P698', originalPrice: 'P1,099', discount: '-36%', sold: '1k sold', rating: '4.7', category: 'tech', merchant: 'Phomemo Philippines', image: 'https://images.unsplash.com/photo-1516382799247-87df95d790b7?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Laptop Backpack Waterproof 15.6', price: 'P849', originalPrice: 'P1,499', discount: '-43%', sold: '1k sold', rating: '4.8', category: 'tech', merchant: 'Golden Wolf', image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Moissanite Bracelet - Gift Box', price: 'P359', originalPrice: 'P699', discount: '-48%', sold: '290 sold', rating: '4.8', category: 'accessories', merchant: 'CHICHIC Jewelry', image: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=1200&auto=format&fit=crop' },
+    { title: '925 Sterling Ring Couple Set', price: 'P132', originalPrice: 'P260', discount: '-49%', sold: '2k sold', rating: '4.9', category: 'accessories', merchant: 'Cyimi Custom Jewelry', image: 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Gold Butterfly Necklace Gift', price: 'P139', originalPrice: 'P289', discount: '-52%', sold: '1k sold', rating: '4.7', category: 'accessories', merchant: 'Babulin Shine', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Italian Charm Bracelet Link Set', price: 'P23', originalPrice: 'P59', discount: '-61%', sold: '10k sold', rating: '4.9', category: 'accessories', merchant: 'Bracelet-Fzone', image: 'https://images.unsplash.com/photo-1603561596112-0a132b757442?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Sling Shoulder Bag - Large Capacity', price: 'P79', originalPrice: 'P189', discount: '-58%', sold: '2k sold', rating: '4.8', category: 'lifestyle', merchant: 'Fenshij Store', image: 'https://images.unsplash.com/photo-1524498250077-390f9e378fc0?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Dried Mango Chili Snack', price: 'P120', originalPrice: 'P199', discount: '-40%', sold: '1k sold', rating: '4.8', category: 'lifestyle', merchant: 'Tasty Dried Fruit Food', image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'French Celtic Fine Sea Salt', price: 'P51', originalPrice: 'P99', discount: '-48%', sold: '254 sold', rating: '4.7', category: 'lifestyle', merchant: 'MoHon Food', image: 'https://images.unsplash.com/photo-1514995669114-6081e934b693?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Jenga Classic 54 PCS Hardwood', price: 'P237', originalPrice: 'P399', discount: '-41%', sold: '10k sold', rating: '4.9', category: 'lifestyle', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'AAA Premium Polo Shirt Unisex', price: 'P289', originalPrice: 'P420', discount: '-31%', sold: '977 sold', rating: '4.7', category: 'fashion', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Round Neck T-Shirt AAA Jeans', price: 'P97', originalPrice: 'P169', discount: '-43%', sold: '1k sold', rating: '4.7', category: 'fashion', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Phone Lanyard Holder Set', price: 'P22', originalPrice: 'P55', discount: '-60%', sold: '867 sold', rating: '4.6', category: 'tech', merchant: 'Noor Shop', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1200&auto=format&fit=crop' },
+    { title: 'Extractor Blender 12 PCS Set', price: 'P1,600', originalPrice: 'P2,200', discount: '-27%', sold: '10k sold', rating: '4.8', category: 'lifestyle', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1570222094114-d054a817e56b?q=80&w=1200&auto=format&fit=crop' }
+];
+
+const demoProducts = demoSeedProducts.map((item, index) => ({
+    ...item,
+    shopeeLink: quickShopeeLinks[index % quickShopeeLinks.length],
+    videoUrl: ''
+}));
+
+const categoryRules = [
+    { category: 'tech', regex: /(charger|keyboard|phone|laptop|gadget|printer|usb|bluetooth|speaker)/i },
+    { category: 'fashion', regex: /(shirt|hoodie|pants|wallet|dress|bag|sando|panty|briefs|underwear|jacket)/i },
+    { category: 'accessories', regex: /(bracelet|necklace|earring|ring|jewelry|charms|watch|chain|clip|buckle)/i },
+    { category: 'lifestyle', regex: /(food|mango|salt|toy|blender|seasoning|home|kitchen|pet|garbage)/i }
+];
+
+function isFirebaseConfigured() {
+    return Object.values(firebaseConfig).every((value) => typeof value === 'string' && !value.startsWith('YOUR_'));
+}
+
+function loadProducts(items) {
+    state.products = items.map((item, index) => normalizeProduct(item, index));
+    applyFilters();
+}
+
+function inferCategory(item) {
+    const source = `${item.title || ''} ${item.merchant || ''}`;
+    const matched = categoryRules.find((rule) => rule.regex.test(source));
+    return matched ? matched.category : 'lifestyle';
+}
+
+function toPeso(value) {
+    if (value === undefined || value === null || value === '') return 'P0';
+    const text = String(value).trim();
+    if (/^P/i.test(text)) return text;
+    if (/^₱/.test(text)) return text.replace('₱', 'P');
+    return `P${text}`;
+}
+
+function asHttpUrl(value) {
+    if (!value) return '';
+    const text = String(value).trim();
+    return /^https?:\/\//i.test(text) ? text : '';
+}
+
+function normalizeProduct(item, index) {
+    const title = item.title || item.name || item.itemName || item['Item Name'] || `Shopee Item #${index + 1}`;
+    const merchant = item.merchant || item.shopName || item.storeName || item['Shop Name'] || item.offerName || item['Offer Name'] || 'Top Seller';
+    const primaryLink = asHttpUrl(item.shopeeLink || item.link || item.offerLink || item.productLink || item['Trackable Link_short'] || item['Product Link'] || item['Offer Link']) || quickShopeeLinks[index % quickShopeeLinks.length] || 'https://shopee.ph';
+
+    return {
+        title,
+        merchant,
+        category: item.category || inferCategory({ title, merchant }),
+        price: toPeso(item.price || item.Price),
+        originalPrice: item.originalPrice || item.priceBefore || '',
+        discount: item.discount || item.commissionRate || item['Commission Rate'] || 'HOT DEAL',
+        sold: item.sold || item.sales || item['Sales'] || '1k sold',
+        rating: item.rating || '4.8',
+        image: asHttpUrl(item.image || item.imageUrl || item.thumbnail) || 'https://via.placeholder.com/420x420?text=Budolsfind',
+        shopeeLink: primaryLink,
+        videoUrl: asHttpUrl(item.videoUrl || item.video || '')
+    };
+}
+
+function parseCsv(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+            if (inQuotes && next === '"') {
+                field += '"';
+                i += 1;
+            } else {
+                inQuotes = !inQuotes;
+            }
+            continue;
+        }
+
+        if (!inQuotes && char === ',') {
+            row.push(field.trim());
+            field = '';
+            continue;
+        }
+
+        if (!inQuotes && (char === '\n' || char === '\r')) {
+            if (char === '\r' && next === '\n') {
+                i += 1;
+            }
+
+            if (field.length || row.length) {
+                row.push(field.trim());
+                rows.push(row);
+                row = [];
+                field = '';
+            }
+            continue;
+        }
+
+        field += char;
+    }
+
+    if (field.length || row.length) {
+        row.push(field.trim());
+        rows.push(row);
+    }
+
+    return rows;
+}
+
+async function loadCsvProducts() {
+    try {
+        const response = await fetch('./data/products.csv', { cache: 'no-cache' });
+        if (!response.ok) return [];
+
+        const csvText = await response.text();
+        const parsed = parseCsv(csvText);
+        if (parsed.length < 2) return [];
+
+        const headers = parsed[0];
+        const body = parsed.slice(1);
+
+        return body
+            .filter((line) => line.some((value) => value !== ''))
+            .map((line) => {
+                const item = {};
+                headers.forEach((header, index) => {
+                    item[header] = line[index] || '';
+                });
+                return item;
+            });
+    } catch {
+        return [];
+    }
+}
+
+function applyFilters() {
+    const search = state.searchTerm.trim().toLowerCase();
+    const filtered = state.products.filter((item) => {
+        const categoryMatch = state.category === 'all' || item.category === state.category;
+        const titleMatch = (item.title || '').toLowerCase().includes(search);
+        return categoryMatch && titleMatch;
+    });
+
+    renderProducts(filtered);
+}
+
+function renderProducts(items) {
+    productGrid.innerHTML = '';
+
+    if (!items.length) {
+        const empty = document.createElement('p');
+        empty.className = 'empty-state';
+        empty.textContent = 'Walang result sa filter mo. Try ibang keyword o category.';
+        productGrid.appendChild(empty);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    items.forEach((item) => fragment.appendChild(createCard(item)));
+    productGrid.appendChild(fragment);
+}
+
+function createCard(item) {
+    const card = document.createElement('div');
+    card.className = 'card item-card';
+
+    const discountText = item.discount || 'HOT DEAL';
+
+    card.innerHTML = `
+        <div class="badges">
+            <span class="badge badge-discount">${discountText}</span>
+            <span class="badge badge-shipping">FREE SHIPPING</span>
+        </div>
+        <div class="image-container">
+            <img src="${item.image || 'https://via.placeholder.com/420x420?text=Budolsfind'}" alt="${item.title || 'Product'}">
+            <button type="button" class="play-overlay">
+                <span class="play-icon">▶</span>
+            </button>
+        </div>
+        <div class="card-content">
+            <p class="merchant">${item.merchant || 'Top Seller'}</p>
+            <h3 class="card-title">${item.title || 'Untitled Product'}</h3>
+            <div class="price-section">
+                <span class="current-price">${item.price || 'P0'}</span>
+                ${item.originalPrice ? `<span class="original-price">${item.originalPrice}</span>` : ''}
+            </div>
+            <div class="meta-row">
+                <span>${item.rating || '4.8'} ⭐</span>
+                <span>${item.sold || '1k sold'}</span>
+            </div>
+            <a href="${item.shopeeLink || '#'}" target="_blank" rel="noopener noreferrer" class="btn-shopee">Buy on Shopee</a>
+        </div>
+    `;
+
+    const previewButton = card.querySelector('.play-overlay');
+    previewButton.addEventListener('click', () => openVideo(item.videoUrl || ''));
+
+    return card;
+}
+
+function setupFilters() {
+    searchInput.addEventListener('input', (event) => {
+        state.searchTerm = event.target.value;
+        applyFilters();
+    });
+
+    categoryButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const selected = button.dataset.filter || 'all';
+            categoryButtons.forEach((b) => {
+                b.classList.toggle('active', (b.dataset.filter || 'all') === selected);
+            });
+            state.category = selected;
+            applyFilters();
+        });
+    });
+}
+
+function renderQuickLinks() {
+    const quickLinks = document.getElementById('quickLinks');
+    if (!quickLinks) return;
+
+    quickLinks.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    quickShopeeLinks.forEach((url, index) => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.className = 'quick-link';
+        link.textContent = `Shopee Link ${index + 1}`;
+        fragment.appendChild(link);
+    });
+
+    quickLinks.appendChild(fragment);
+}
+
+const modal = document.getElementById('videoModal');
+const iframe = document.getElementById('videoFrame');
+
+function normalizeVideoUrl(url) {
+    if (!url) return '';
+    if (url.includes('embed/')) return `${url}?autoplay=1`;
+    if (url.includes('watch?v=')) return `${url.replace('watch?v=', 'embed/')}?autoplay=1`;
+    if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1]?.split('?')[0];
+        return id ? `https://www.youtube.com/embed/${id}?autoplay=1` : '';
+    }
+    return url;
+}
+
+function openVideo(url) {
+    const normalized = normalizeVideoUrl(url);
+    if (!normalized) {
+        alert('No preview video available for this item.');
+        return;
+    }
+
+    modal.style.display = 'flex';
+    iframe.src = normalized;
+}
+
+function closeVideoModal() {
+    modal.style.display = 'none';
+    iframe.src = '';
+}
+
+document.querySelector('.close-btn').addEventListener('click', closeVideoModal);
+modal.addEventListener('click', (event) => {
+    if (event.target === modal) closeVideoModal();
+});
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.style.display === 'flex') {
+        closeVideoModal();
+    }
+});
+
+function startRealtimeFeed() {
+    const fallbackProducts = [...csvProductsCache, ...demoProducts];
+
+    if (!isFirebaseConfigured()) {
+        loadProducts(fallbackProducts);
+        return;
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const q = query(collection(db, 'links'), orderBy('timestamp', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
+        const rows = snapshot.docs.map((doc) => doc.data());
+        loadProducts([...rows, ...csvProductsCache]);
+    }, () => {
+        loadProducts(fallbackProducts);
+    });
+}
+
+async function bootstrapData() {
+    csvProductsCache = await loadCsvProducts();
+    startRealtimeFeed();
+}
+
+setupFilters();
+renderQuickLinks();
+bootstrapData();

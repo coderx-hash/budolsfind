@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budolsfind | Best Fashion & Tech Deals</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sale-banner">🔥 NEXT MEGA SALE: PAYDAY KINSE (APRIL 15) - ADD TO CART NA! 🔥</div>
+
+    <header>
+        <h1>Budolsfind</h1>
+        <p>Curated affiliate picks with high-converting Shopee finds</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search clothes, gadgets...">
+        </div>
+    </header>
+
+    <main class="container marketplace-layout">
+        <aside class="category-panel">
+            <h2>Categories</h2>
+            <div class="categories side-categories">
+                <button class="category-btn active" data-filter="all">All Finds</button>
+                <button class="category-btn" data-filter="fashion">Fashion</button>
+                <button class="category-btn" data-filter="tech">Tech & Gadgets</button>
+                <button class="category-btn" data-filter="accessories">Accessories</button>
+                <button class="category-btn" data-filter="lifestyle">Lifestyle</button>
+            </div>
+        </aside>
+
+        <section class="content-area">
+            <section class="hero-banners">
+                <article class="hero-card hero-main">
+                    <p class="hero-label">Budol Pick Of The Day</p>
+                    <h2>Checkout-ready products with better CTR-focused cards</h2>
+                    <p>Designed for desktop and mobile so your customers stay, browse, and click.</p>
+                </article>
+                <article class="hero-card hero-mini">
+                    <p class="hero-label">Flash Deals</p>
+                    <h3>Top picks update-friendly for API/Firebase feed</h3>
+                </article>
+                <article class="hero-card hero-mini">
+                    <p class="hero-label">Free Shipping</p>
+                    <h3>Affiliate links optimized for quick add-to-cart flow</h3>
+                </article>
+            </section>
+
+            <section class="quick-links-wrap">
+                <h3>Quick Shopee Links</h3>
+                <div class="quick-links" id="quickLinks"></div>
+            </section>
+
+            <div class="grid" id="productGrid">
+                <p id="loadingText">Loading awesome finds...</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn">&times;</button>
+            <div class="video-wrapper">
+                <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
