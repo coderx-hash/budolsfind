@@ -17,53 +17,66 @@
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search clothes, gadgets...">
         </div>
+
+        <div class="filter-chips" id="filterChips">
+            <button class="category-btn active" data-filter="all">All Finds</button>
+            <button class="category-btn" data-filter="fashion">Fashion</button>
+            <button class="category-btn" data-filter="tech">Tech & Gadgets</button>
+            <button class="category-btn" data-filter="accessories">Accessories</button>
+            <button class="category-btn" data-filter="lifestyle">Lifestyle</button>
+        </div>
     </header>
 
-    <main class="container marketplace-layout">
-        <aside class="category-panel">
-            <h2>Categories</h2>
-            <div class="categories side-categories">
-                <button class="category-btn active" data-filter="all">All Finds</button>
-                <button class="category-btn" data-filter="fashion">Fashion</button>
-                <button class="category-btn" data-filter="tech">Tech & Gadgets</button>
-                <button class="category-btn" data-filter="accessories">Accessories</button>
-                <button class="category-btn" data-filter="lifestyle">Lifestyle</button>
+    <main class="container home-layout">
+        <section class="engagement-strip">
+            <article class="eng-card">
+                <p class="eng-label">Current Date & Time</p>
+                <h3 id="currentDateTime">Loading...</h3>
+            </article>
+            <article class="eng-card">
+                <p class="eng-label">Countdown To Next Sale</p>
+                <h3 id="countdownTimer">Loading...</h3>
+            </article>
+        </section>
+
+        <section class="news-strip">
+            <span class="news-badge">News</span>
+            <p id="newsTicker">Loading updates...</p>
+        </section>
+
+        <section class="showcase-card">
+            <div class="section-head">
+                <h2>Categories</h2>
             </div>
-        </aside>
+            <div class="categories-showcase" id="categoryShowcase"></div>
+        </section>
 
-        <section class="content-area">
-            <section class="engagement-strip">
-                <article class="eng-card">
-                    <p class="eng-label">Current Date & Time</p>
-                    <h3 id="currentDateTime">Loading...</h3>
-                </article>
-                <article class="eng-card">
-                    <p class="eng-label">Countdown To Next Sale</p>
-                    <h3 id="countdownTimer">Loading...</h3>
-                </article>
-            </section>
+        <section class="showcase-card">
+            <div class="section-head">
+                <h2>Flash Deals</h2>
+                <span class="section-meta" id="flashCountdown">00:00:00</span>
+            </div>
+            <div class="horizontal-grid" id="flashSaleGrid"></div>
+        </section>
 
-            <section class="news-strip">
-                <span class="news-badge">News</span>
-                <p id="newsTicker">Loading updates...</p>
-            </section>
+        <section class="showcase-card">
+            <div class="section-head">
+                <h2>Top Products</h2>
+            </div>
+            <div class="horizontal-grid" id="topProductsGrid"></div>
+        </section>
 
-            <section class="hero-banners">
-                <article class="hero-card hero-main">
-                    <p class="hero-label">Budol Pick Of The Day</p>
-                    <h2>Checkout-ready products with better CTR-focused cards</h2>
-                    <p>Designed for desktop and mobile so your customers stay, browse, and click.</p>
-                </article>
-                <article class="hero-card hero-mini">
-                    <p class="hero-label">Flash Deals</p>
-                    <h3>Top picks update-friendly for API/Firebase feed</h3>
-                </article>
-                <article class="hero-card hero-mini">
-                    <p class="hero-label">Free Shipping</p>
-                    <h3>Affiliate links optimized for quick add-to-cart flow</h3>
-                </article>
-            </section>
+        <section class="showcase-card">
+            <div class="section-head">
+                <h2>Mall Picks</h2>
+            </div>
+            <div class="mall-grid" id="mallGrid"></div>
+        </section>
 
+        <section class="showcase-card">
+            <div class="section-head">
+                <h2>All Affiliate Products</h2>
+            </div>
             <div class="grid" id="productGrid">
                 <p id="loadingText">Loading awesome finds...</p>
             </div>

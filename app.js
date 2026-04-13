@@ -20,6 +20,11 @@ const paginationControls = document.getElementById('paginationControls');
 const currentDateTime = document.getElementById('currentDateTime');
 const countdownTimer = document.getElementById('countdownTimer');
 const newsTicker = document.getElementById('newsTicker');
+const categoryShowcase = document.getElementById('categoryShowcase');
+const flashSaleGrid = document.getElementById('flashSaleGrid');
+const topProductsGrid = document.getElementById('topProductsGrid');
+const mallGrid = document.getElementById('mallGrid');
+const flashCountdown = document.getElementById('flashCountdown');
 
 const state = {
     searchTerm: '',
@@ -44,23 +49,11 @@ const demoSeedProducts = [
     { title: 'Oversized Street Tee - Minimal Black', price: 'P349', originalPrice: 'P699', discount: '-50%', sold: '3.2k sold', rating: '4.9', category: 'fashion', merchant: 'Urban Layer PH', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop' },
     { title: 'Korean Fit Hoodie Jacket Unisex', price: 'P420', originalPrice: 'P820', discount: '-49%', sold: '2.7k sold', rating: '4.8', category: 'fashion', merchant: 'StreetLab Official', image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop' },
     { title: 'Canvas Tote Bag - Personalized', price: 'P76', originalPrice: 'P149', discount: '-49%', sold: '6k sold', rating: '4.9', category: 'fashion', merchant: 'HypeTouch', image: 'https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Cotton Boxer Briefs Women Set', price: 'P150', originalPrice: 'P289', discount: '-48%', sold: '10k sold', rating: '4.8', category: 'fashion', merchant: 'All of me Store', image: 'https://images.unsplash.com/photo-1618886614638-80e3c103d31a?q=80&w=1200&auto=format&fit=crop' },
     { title: 'RGB Mechanical Keyboard 87 Keys', price: 'P1,249', originalPrice: 'P1,999', discount: '-37%', sold: '1.8k sold', rating: '4.8', category: 'tech', merchant: 'Keycap Republic', image: 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?q=80&w=1200&auto=format&fit=crop' },
     { title: 'GaN Fast Charger 65W USB-C', price: 'P799', originalPrice: 'P1,299', discount: '-38%', sold: '12.4k sold', rating: '4.8', category: 'tech', merchant: 'ChargePro Hub', image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Wireless Tattoo Stencil Printer', price: 'P698', originalPrice: 'P1,099', discount: '-36%', sold: '1k sold', rating: '4.7', category: 'tech', merchant: 'Phomemo Philippines', image: 'https://images.unsplash.com/photo-1516382799247-87df95d790b7?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Laptop Backpack Waterproof 15.6', price: 'P849', originalPrice: 'P1,499', discount: '-43%', sold: '1k sold', rating: '4.8', category: 'tech', merchant: 'Golden Wolf', image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop' },
     { title: 'Moissanite Bracelet - Gift Box', price: 'P359', originalPrice: 'P699', discount: '-48%', sold: '290 sold', rating: '4.8', category: 'accessories', merchant: 'CHICHIC Jewelry', image: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=1200&auto=format&fit=crop' },
-    { title: '925 Sterling Ring Couple Set', price: 'P132', originalPrice: 'P260', discount: '-49%', sold: '2k sold', rating: '4.9', category: 'accessories', merchant: 'Cyimi Custom Jewelry', image: 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Gold Butterfly Necklace Gift', price: 'P139', originalPrice: 'P289', discount: '-52%', sold: '1k sold', rating: '4.7', category: 'accessories', merchant: 'Babulin Shine', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Italian Charm Bracelet Link Set', price: 'P23', originalPrice: 'P59', discount: '-61%', sold: '10k sold', rating: '4.9', category: 'accessories', merchant: 'Bracelet-Fzone', image: 'https://images.unsplash.com/photo-1603561596112-0a132b757442?q=80&w=1200&auto=format&fit=crop' },
     { title: 'Sling Shoulder Bag - Large Capacity', price: 'P79', originalPrice: 'P189', discount: '-58%', sold: '2k sold', rating: '4.8', category: 'lifestyle', merchant: 'Fenshij Store', image: 'https://images.unsplash.com/photo-1524498250077-390f9e378fc0?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Dried Mango Chili Snack', price: 'P120', originalPrice: 'P199', discount: '-40%', sold: '1k sold', rating: '4.8', category: 'lifestyle', merchant: 'Tasty Dried Fruit Food', image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'French Celtic Fine Sea Salt', price: 'P51', originalPrice: 'P99', discount: '-48%', sold: '254 sold', rating: '4.7', category: 'lifestyle', merchant: 'MoHon Food', image: 'https://images.unsplash.com/photo-1514995669114-6081e934b693?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Jenga Classic 54 PCS Hardwood', price: 'P237', originalPrice: 'P399', discount: '-41%', sold: '10k sold', rating: '4.9', category: 'lifestyle', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'AAA Premium Polo Shirt Unisex', price: 'P289', originalPrice: 'P420', discount: '-31%', sold: '977 sold', rating: '4.7', category: 'fashion', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Round Neck T-Shirt AAA Jeans', price: 'P97', originalPrice: 'P169', discount: '-43%', sold: '1k sold', rating: '4.7', category: 'fashion', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Phone Lanyard Holder Set', price: 'P22', originalPrice: 'P55', discount: '-60%', sold: '867 sold', rating: '4.6', category: 'tech', merchant: 'Noor Shop', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1200&auto=format&fit=crop' },
-    { title: 'Extractor Blender 12 PCS Set', price: 'P1,600', originalPrice: 'P2,200', discount: '-27%', sold: '10k sold', rating: '4.8', category: 'lifestyle', merchant: 'YJJ Merchandise', image: 'https://images.unsplash.com/photo-1570222094114-d054a817e56b?q=80&w=1200&auto=format&fit=crop' }
+    { title: 'Dried Mango Chili Snack', price: 'P120', originalPrice: 'P199', discount: '-40%', sold: '1k sold', rating: '4.8', category: 'lifestyle', merchant: 'Tasty Dried Fruit Food', image: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?q=80&w=1200&auto=format&fit=crop' }
 ];
 
 const demoProducts = demoSeedProducts.map((item, index) => ({
@@ -70,19 +63,37 @@ const demoProducts = demoSeedProducts.map((item, index) => ({
 }));
 
 const categoryRules = [
-    { category: 'tech', regex: /(charger|keyboard|phone|laptop|gadget|printer|usb|bluetooth|speaker)/i },
-    { category: 'fashion', regex: /(shirt|hoodie|pants|wallet|dress|bag|sando|panty|briefs|underwear|jacket|swim|hat|belt|scarf|shoes)/i },
-    { category: 'accessories', regex: /(bracelet|necklace|earring|ring|jewelry|charms|watch|chain|clip|buckle)/i },
-    { category: 'lifestyle', regex: /(food|mango|salt|toy|blender|seasoning|home|kitchen|pet|garbage|mirror|aquarium|camp|table|fan)/i }
+    { category: 'tech', regex: /(charger|keyboard|phone|laptop|gadget|printer|usb|bluetooth|speaker|camera|powerbank|monitor|microphone)/i },
+    { category: 'fashion', regex: /(shirt|hoodie|pants|wallet|dress|bag|sando|panty|briefs|underwear|jacket|swim|hat|belt|scarf|shoes|apparel)/i },
+    { category: 'accessories', regex: /(bracelet|necklace|earring|ring|jewelry|charms|watch|chain|clip|buckle|eyeglass|sunglass)/i },
+    { category: 'lifestyle', regex: /(food|mango|salt|toy|blender|seasoning|home|kitchen|pet|garbage|mirror|aquarium|camp|table|fan|stroller)/i }
+];
+
+const showcaseCategories = [
+    { name: 'Men Apparel', icon: '👕', filter: 'fashion' },
+    { name: 'Mobiles & Gadgets', icon: '📱', filter: 'tech' },
+    { name: 'Mobile Accessories', icon: '🔌', filter: 'tech' },
+    { name: 'Home Entertainment', icon: '📺', filter: 'tech' },
+    { name: 'Babies & Kids', icon: '🍼', filter: 'lifestyle' },
+    { name: 'Home & Living', icon: '🏠', filter: 'lifestyle' },
+    { name: 'Groceries', icon: '🧺', filter: 'lifestyle' },
+    { name: 'Toys, Games', icon: '🧸', filter: 'lifestyle' },
+    { name: 'Women Bags', icon: '👜', filter: 'fashion' },
+    { name: 'Women Accessories', icon: '🕶️', filter: 'accessories' },
+    { name: 'Women Apparel', icon: '👗', filter: 'fashion' },
+    { name: 'Health & Care', icon: '🧴', filter: 'lifestyle' },
+    { name: 'Makeup', icon: '💄', filter: 'accessories' },
+    { name: 'Appliances', icon: '🧃', filter: 'tech' },
+    { name: 'Laptops', icon: '💻', filter: 'tech' },
+    { name: 'Cameras', icon: '📷', filter: 'tech' },
+    { name: 'Sports & Travel', icon: '🥊', filter: 'lifestyle' },
+    { name: 'Men Accessories', icon: '⌚', filter: 'fashion' },
+    { name: 'Men Shoes', icon: '👟', filter: 'fashion' },
+    { name: 'Motors', icon: '🏍️', filter: 'tech' }
 ];
 
 function isFirebaseConfigured() {
     return Object.values(firebaseConfig).every((value) => typeof value === 'string' && !value.startsWith('YOUR_'));
-}
-
-function loadProducts(items) {
-    state.products = items.map((item, index) => normalizeProduct(item, index));
-    applyFilters();
 }
 
 function inferCategory(item) {
@@ -137,6 +148,22 @@ function createPlaceholderImage(title, category) {
     return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function parseCompactNumber(value) {
+    if (value === undefined || value === null) return 0;
+    const raw = String(value).replace(/,/g, '').replace(/\+/g, '').trim().toUpperCase();
+    const matched = raw.match(/([\d.]+)\s*([KMB]?)/);
+    if (!matched) return 0;
+
+    const base = Number(matched[1]);
+    if (Number.isNaN(base)) return 0;
+
+    const unit = matched[2];
+    if (unit === 'K') return base * 1000;
+    if (unit === 'M') return base * 1000000;
+    if (unit === 'B') return base * 1000000000;
+    return base;
+}
+
 function normalizeProduct(item, index) {
     const title = item.title || item.name || item.itemName || item['Item Name'] || `Shopee Item #${index + 1}`;
     const merchant = item.merchant || item.shopName || item.storeName || item['Shop Name'] || item.offerName || item['Offer Name'] || 'Top Seller';
@@ -158,8 +185,7 @@ function normalizeProduct(item, index) {
         image: remoteImage || createGuaranteedImageUrl(title, category, index),
         hasRealImage: Boolean(remoteImage),
         fallbackImage,
-        shopeeLink: primaryLink,
-        videoUrl: asHttpUrl(item.videoUrl || item.video || '')
+        shopeeLink: primaryLink
     };
 }
 
@@ -221,7 +247,9 @@ async function loadCsvProducts() {
         './data/products-3.csv',
         './data/products-4.csv',
         './data/products-5.csv',
-        './data/products-6.csv'
+        './data/products-6.csv',
+        './data/products-7.csv',
+        './data/products-8.csv'
     ];
 
     const all = await Promise.all(csvPaths.map(async (path) => {
@@ -239,11 +267,11 @@ async function loadCsvProducts() {
             return body
                 .filter((line) => line.some((value) => value !== ''))
                 .map((line) => {
-                    const item = {};
+                    const entry = {};
                     headers.forEach((header, index) => {
-                        item[header] = line[index] || '';
+                        entry[header] = line[index] || '';
                     });
-                    return item;
+                    return entry;
                 });
         } catch {
             return [];
@@ -253,12 +281,237 @@ async function loadCsvProducts() {
     return all.flat();
 }
 
+function syncFilterButtons(filter) {
+    categoryButtons.forEach((button) => {
+        button.classList.toggle('active', (button.dataset.filter || 'all') === filter);
+    });
+}
+
+function renderCategoryShowcase(products) {
+    if (!categoryShowcase) return;
+
+    categoryShowcase.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    showcaseCategories.forEach((entry) => {
+        const count = products.filter((item) => item.category === entry.filter).length;
+        const tile = document.createElement('button');
+        tile.type = 'button';
+        tile.className = 'cat-tile';
+        tile.title = `${count} products`;
+        tile.innerHTML = `
+            <span class="cat-icon">${entry.icon}</span>
+            <span class="cat-name">${entry.name}</span>
+        `;
+
+        tile.addEventListener('click', () => {
+            state.category = entry.filter;
+            syncFilterButtons(entry.filter);
+            applyFilters();
+            productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        fragment.appendChild(tile);
+    });
+
+    categoryShowcase.appendChild(fragment);
+}
+
+function renderDealCards(container, items) {
+    if (!container) return;
+
+    container.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    items.forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'deal-card';
+        card.innerHTML = `
+            <img class="deal-image" src="${item.image}" alt="${item.title}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <div class="deal-content">
+                <p class="deal-price">${item.price}</p>
+                <div class="deal-sold">${item.sold || 'SELLING FAST'}</div>
+                <p class="merchant-name">${item.merchant}</p>
+                <a class="deal-link" href="${item.shopeeLink}" target="_blank" rel="noopener noreferrer">Buy Now</a>
+            </div>
+        `;
+
+        const img = card.querySelector('.deal-image');
+        img.addEventListener('error', () => {
+            img.src = item.fallbackImage;
+        }, { once: true });
+
+        fragment.appendChild(card);
+    });
+
+    container.appendChild(fragment);
+}
+
+function renderMallCards(products) {
+    if (!mallGrid) return;
+
+    const seen = new Set();
+    const mallItems = products.filter((item) => {
+        const key = `${item.merchant}-${item.shopeeLink}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    }).slice(0, 10);
+
+    mallGrid.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    mallItems.forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'mall-card';
+        card.innerHTML = `
+            <img class="mall-img" src="${item.image}" alt="${item.merchant}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            <a class="mall-link" href="${item.shopeeLink}" target="_blank" rel="noopener noreferrer">Shop Now</a>
+        `;
+
+        const img = card.querySelector('.mall-img');
+        img.addEventListener('error', () => {
+            img.src = item.fallbackImage;
+        }, { once: true });
+
+        fragment.appendChild(card);
+    });
+
+    mallGrid.appendChild(fragment);
+}
+
+function renderHomepageSections(products) {
+    renderCategoryShowcase(products);
+
+    const bySales = [...products].sort((a, b) => parseCompactNumber(b.sold) - parseCompactNumber(a.sold));
+    renderDealCards(flashSaleGrid, bySales.slice(0, 6));
+    renderDealCards(topProductsGrid, bySales.slice(6, 12));
+    renderMallCards(products);
+}
+
+function updatePagination(totalItems) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / state.pageSize));
+    state.currentPage = Math.max(1, Math.min(state.currentPage, totalPages));
+
+    if (prevPageBtn) prevPageBtn.disabled = state.currentPage <= 1;
+    if (nextPageBtn) nextPageBtn.disabled = state.currentPage >= totalPages;
+    if (pageInfo) pageInfo.textContent = `Page ${state.currentPage} of ${totalPages}`;
+    if (paginationControls) paginationControls.style.display = totalItems ? 'flex' : 'none';
+}
+
+function getCurrentPageItems(items) {
+    const start = (state.currentPage - 1) * state.pageSize;
+    return items.slice(start, start + state.pageSize);
+}
+
+function renderProducts(items) {
+    productGrid.innerHTML = '';
+
+    if (!items.length) {
+        if (paginationControls) paginationControls.style.display = 'none';
+        const empty = document.createElement('p');
+        empty.className = 'empty-state';
+        empty.textContent = 'Walang result sa filter mo. Try ibang keyword o category.';
+        productGrid.appendChild(empty);
+        return;
+    }
+
+    updatePagination(items.length);
+    const pageItems = getCurrentPageItems(items);
+
+    const fragment = document.createDocumentFragment();
+    pageItems.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'card item-card';
+        card.innerHTML = `
+            <div class="badges">
+                <span class="badge badge-discount">${item.discount || 'HOT DEAL'}</span>
+                <span class="badge badge-shipping">FREE SHIPPING</span>
+            </div>
+            <div class="image-container">
+                <img src="${item.image}" alt="${item.title}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+            </div>
+            <div class="card-content">
+                <p class="merchant">${item.merchant}</p>
+                <h3 class="card-title">${item.title}</h3>
+                <div class="price-section">
+                    <span class="current-price">${item.price}</span>
+                    ${item.originalPrice ? `<span class="original-price">${item.originalPrice}</span>` : ''}
+                </div>
+                <div class="meta-row">
+                    <span>${item.rating || '4.8'} ⭐</span>
+                    <span>${item.sold || '1k sold'}</span>
+                </div>
+                <a href="${item.shopeeLink}" target="_blank" rel="noopener noreferrer" class="btn-shopee">Buy on Shopee</a>
+            </div>
+        `;
+
+        const img = card.querySelector('img');
+        img.addEventListener('error', () => {
+            img.src = item.fallbackImage;
+        }, { once: true });
+
+        fragment.appendChild(card);
+    });
+
+    productGrid.appendChild(fragment);
+}
+
+function applyFilters() {
+    const search = state.searchTerm.trim().toLowerCase();
+    const filtered = state.products.filter((item) => {
+        const categoryMatch = state.category === 'all' || item.category === state.category;
+        const titleMatch = (item.title || '').toLowerCase().includes(search);
+        return categoryMatch && titleMatch;
+    });
+
+    filtered.sort((a, b) => Number(b.hasRealImage) - Number(a.hasRealImage));
+    state.filteredProducts = filtered;
+    state.currentPage = 1;
+    renderProducts(filtered);
+}
+
+function setupFilters() {
+    searchInput.addEventListener('input', (event) => {
+        state.searchTerm = event.target.value;
+        applyFilters();
+    });
+
+    categoryButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const selected = button.dataset.filter || 'all';
+            state.category = selected;
+            syncFilterButtons(selected);
+            applyFilters();
+        });
+    });
+}
+
+function setupPagination() {
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (state.currentPage > 1) {
+                state.currentPage -= 1;
+                renderProducts(state.filteredProducts);
+            }
+        });
+    }
+
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(state.filteredProducts.length / state.pageSize));
+            if (state.currentPage < totalPages) {
+                state.currentPage += 1;
+                renderProducts(state.filteredProducts);
+            }
+        });
+    }
+}
+
 function getNextMegaSaleDate() {
     const now = new Date();
     const next = new Date(now.getFullYear(), now.getMonth(), 15, 0, 0, 0);
-    if (now > next) {
-        next.setMonth(next.getMonth() + 1);
-    }
+    if (now > next) next.setMonth(next.getMonth() + 1);
     return next;
 }
 
@@ -296,6 +549,11 @@ function startSaleCountdown() {
         if (countdownTimer) {
             countdownTimer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
         }
+
+        if (flashCountdown) {
+            const compactHours = Math.floor(diff / (1000 * 60 * 60));
+            flashCountdown.textContent = `${compactHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
     };
 
     update();
@@ -304,11 +562,11 @@ function startSaleCountdown() {
 
 function startNewsTicker() {
     const newsItems = [
-        'Flash deals updated daily with fresh Shopee links.',
-        'Trending categories: Fashion, Tech, Accessories, Lifestyle.',
-        'Payday sale countdown is now live for better engagement.',
-        'New product batches added for wider product discovery.',
-        'Mobile layout optimized for no-zoom browsing experience.'
+        'Flash deals refreshed from your latest affiliate CSV links.',
+        'Category showcase is now optimized for mobile no-zoom viewing.',
+        'Top products are ranked by sales to increase click-through.',
+        'Mall picks show shop-now cards with your affiliate links.',
+        'Countdown and real-time date widgets boost buyer engagement.'
     ];
 
     let index = 0;
@@ -323,186 +581,13 @@ function startNewsTicker() {
     setInterval(update, 4000);
 }
 
-function applyFilters() {
-    const search = state.searchTerm.trim().toLowerCase();
-    const filtered = state.products.filter((item) => {
-        const categoryMatch = state.category === 'all' || item.category === state.category;
-        const titleMatch = (item.title || '').toLowerCase().includes(search);
-        return categoryMatch && titleMatch;
-    });
-
-    filtered.sort((a, b) => Number(b.hasRealImage) - Number(a.hasRealImage));
-    state.filteredProducts = filtered;
-    state.currentPage = 1;
-
-    renderProducts(filtered);
-}
-
-function updatePagination(totalItems) {
-    const totalPages = Math.max(1, Math.ceil(totalItems / state.pageSize));
-    state.currentPage = Math.max(1, Math.min(state.currentPage, totalPages));
-
-    if (prevPageBtn) prevPageBtn.disabled = state.currentPage <= 1;
-    if (nextPageBtn) nextPageBtn.disabled = state.currentPage >= totalPages;
-    if (pageInfo) pageInfo.textContent = `Page ${state.currentPage} of ${totalPages}`;
-    if (paginationControls) paginationControls.style.display = totalItems ? 'flex' : 'none';
-}
-
-function getCurrentPageItems(items) {
-    const start = (state.currentPage - 1) * state.pageSize;
-    return items.slice(start, start + state.pageSize);
-}
-
-function gotoPage(page) {
-    state.currentPage = page;
-    renderProducts(state.filteredProducts);
-}
-
-function renderProducts(items) {
-    productGrid.innerHTML = '';
-
-    if (!items.length) {
-        if (paginationControls) paginationControls.style.display = 'none';
-        const empty = document.createElement('p');
-        empty.className = 'empty-state';
-        empty.textContent = 'Walang result sa filter mo. Try ibang keyword o category.';
-        productGrid.appendChild(empty);
-        return;
-    }
-
-    updatePagination(items.length);
-    const pageItems = getCurrentPageItems(items);
-
-    const fragment = document.createDocumentFragment();
-    pageItems.forEach((item) => fragment.appendChild(createCard(item)));
-    productGrid.appendChild(fragment);
-}
-
-function createCard(item) {
-    const card = document.createElement('div');
-    card.className = 'card item-card';
-
-    const discountText = item.discount || 'HOT DEAL';
-    const hasVideo = Boolean(item.videoUrl);
-
-    card.innerHTML = `
-        <div class="badges">
-            <span class="badge badge-discount">${discountText}</span>
-            <span class="badge badge-shipping">FREE SHIPPING</span>
-        </div>
-        <div class="image-container">
-            <img src="${item.image}" alt="${item.title || 'Product'}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
-            ${hasVideo ? `<button type="button" class="play-overlay">
-                <span class="play-icon">▶</span>
-            </button>` : ''}
-        </div>
-        <div class="card-content">
-            <p class="merchant">${item.merchant || 'Top Seller'}</p>
-            <h3 class="card-title">${item.title || 'Untitled Product'}</h3>
-            <div class="price-section">
-                <span class="current-price">${item.price || 'P0'}</span>
-                ${item.originalPrice ? `<span class="original-price">${item.originalPrice}</span>` : ''}
-            </div>
-            <div class="meta-row">
-                <span>${item.rating || '4.8'} ⭐</span>
-                <span>${item.sold || '1k sold'}</span>
-            </div>
-            <a href="${item.shopeeLink || '#'}" target="_blank" rel="noopener noreferrer" class="btn-shopee">Buy on Shopee</a>
-        </div>
-    `;
-
-    const image = card.querySelector('img');
-    image.addEventListener('error', () => {
-        image.src = item.fallbackImage || createPlaceholderImage(item.title, item.category);
-    }, { once: true });
-
-    const previewButton = card.querySelector('.play-overlay');
-    if (previewButton) {
-        previewButton.addEventListener('click', () => openVideo(item.videoUrl || ''));
-    }
-
-    return card;
-}
-
-function setupFilters() {
-    searchInput.addEventListener('input', (event) => {
-        state.searchTerm = event.target.value;
-        applyFilters();
-    });
-
-    categoryButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const selected = button.dataset.filter || 'all';
-            categoryButtons.forEach((b) => {
-                b.classList.toggle('active', (b.dataset.filter || 'all') === selected);
-            });
-            state.category = selected;
-            applyFilters();
-        });
-    });
-}
-
-function setupPagination() {
-    if (prevPageBtn) {
-        prevPageBtn.addEventListener('click', () => {
-            if (state.currentPage > 1) {
-                gotoPage(state.currentPage - 1);
-            }
-        });
-    }
-
-    if (nextPageBtn) {
-        nextPageBtn.addEventListener('click', () => {
-            const totalPages = Math.max(1, Math.ceil(state.filteredProducts.length / state.pageSize));
-            if (state.currentPage < totalPages) {
-                gotoPage(state.currentPage + 1);
-            }
-        });
-    }
-}
-
-const modal = document.getElementById('videoModal');
-const iframe = document.getElementById('videoFrame');
-
-function normalizeVideoUrl(url) {
-    if (!url) return '';
-    if (url.includes('embed/')) return `${url}?autoplay=1`;
-    if (url.includes('watch?v=')) return `${url.replace('watch?v=', 'embed/')}?autoplay=1`;
-    if (url.includes('youtu.be/')) {
-        const id = url.split('youtu.be/')[1]?.split('?')[0];
-        return id ? `https://www.youtube.com/embed/${id}?autoplay=1` : '';
-    }
-    return url;
-}
-
-function openVideo(url) {
-    const normalized = normalizeVideoUrl(url);
-    if (!normalized) return;
-
-    modal.style.display = 'flex';
-    iframe.src = normalized;
-}
-
-function closeVideoModal() {
-    modal.style.display = 'none';
-    iframe.src = '';
-}
-
-document.querySelector('.close-btn').addEventListener('click', closeVideoModal);
-modal.addEventListener('click', (event) => {
-    if (event.target === modal) closeVideoModal();
-});
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && modal.style.display === 'flex') {
-        closeVideoModal();
-    }
-});
-
 function startRealtimeFeed() {
     const fallbackProducts = [...csvProductsCache, ...demoProducts];
 
     if (!isFirebaseConfigured()) {
-        loadProducts(fallbackProducts);
+        state.products = fallbackProducts.map((item, index) => normalizeProduct(item, index));
+        renderHomepageSections(state.products);
+        applyFilters();
         return;
     }
 
@@ -512,9 +597,13 @@ function startRealtimeFeed() {
 
     onSnapshot(q, (snapshot) => {
         const rows = snapshot.docs.map((doc) => doc.data());
-        loadProducts([...rows, ...csvProductsCache]);
+        state.products = [...rows, ...csvProductsCache].map((item, index) => normalizeProduct(item, index));
+        renderHomepageSections(state.products);
+        applyFilters();
     }, () => {
-        loadProducts(fallbackProducts);
+        state.products = fallbackProducts.map((item, index) => normalizeProduct(item, index));
+        renderHomepageSections(state.products);
+        applyFilters();
     });
 }
 
